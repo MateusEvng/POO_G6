@@ -12,16 +12,17 @@ public class Data {
 
     //construtor
     public Data(int dia, int mes, int ano, int hora, int minuto){
-        if (validaEntradaDia(dia, mes, ano, hora, minuto)) {
-            if (validaMes(dia, mes)) {
-                this.dia = dia;
-                this.mes = mes;
-                this.ano = ano;
-
-                this.hora = hora;
-                this.minuto = minuto;
-            }
+        if (validaData(dia, mes, ano)) {
+            
+            this.dia = dia;
+            this.mes = mes;
+            this.ano = ano;
         } else throw new IllegalArgumentException("A Data inseria está inválida");
+
+        if (validaHora(hora, minuto)) {
+            this.hora = hora;
+            this.minuto = minuto;
+        } else throw new IllegalArgumentException("A Hora inserida está inválida");
 
     }
 
@@ -34,43 +35,75 @@ public class Data {
 
 
     //validação
-    private boolean validaEntradaDia(int dia, int mes, int ano, int hora, int minuto){
-        return ((dia < 1 || dia > 31) && (mes < 1 || mes > 31) && (ano < 2024 || ano > 2025) && (hora < 1 || hora > 60) && (minuto < 1 || minuto > 60));
+    private boolean validaData(int dia, int mes, int ano){
+        if(ano < 2024) return false;
+        else if(mes < 1 || mes > 12) return false; //valida se o mes está dentro o intervalo
+        else if(dia < 1 || dia > diasNoMes(dia, mes)) return false; // valida se o dia é maior que 1 e se está dentro do intervalos de dia do mes inserido
+
+        return true;
     }
-    private boolean validaMes(int dia, int mes){
-        return ((dia > 28 && mes == 2) || (dia > 30 && mes == 4) || (dia > 30 && mes == 6) || (dia > 30 && mes == 9) || (dia > 30 && mes == 11));
+
+    private int diasNoMes(int dia, int mes){
+        if(mes == 2){
+            if(validaBissexto(mes)) return 29; // se for bissexto fev tem 29 dias
+            else return 28;
+        } // se for fevereiro retorna 28 dias
+        else if(mes == 4 || mes == 6 || mes == 9 || mes == 11) return 30; // se for abril, junho, setembro ou novembro retorna 30 dias
+        else return 31; // se não for nenhum desses, retorna 31
+    }
+
+    private boolean validaHora(int hora, int minuto){
+        return ((hora < 1 || hora > 60) && (minuto < 0 || minuto > 60));//verifica se a hora e os minutos são validos;
+    }
+
+    private boolean validaBissexto(int ano) {
+        return (ano % 4 == 0 && ano % 100 != 0) || (ano % 400 == 0);
     }
 
     //getters e setters
-    public int getAno() {
-        return ano;
-    }
     public int getDia() {
         return dia;
     }
-    public int getHora() {
-        return hora;
+    public void setDia(int dia) {
+        if(validaData(dia, this.mes, this.ano)){
+            this.dia = dia;
+        } else throw new IllegalArgumentException("O dia inserido está inválido");
     }
+
+    public int getAno() {
+        return ano;
+    }
+    public void setAno(int ano) {
+        if(validaData(this.dia, this.mes, ano)){
+            this.ano = ano;
+        } else throw new IllegalArgumentException("O ano inserido está inválido");
+    }
+
     public int getMes() {
         return mes;
     }
+    public void setMes(int mes) {
+        if (validaData(this.dia, mes, this.ano)) {
+            this.mes = mes;
+        } else throw new IllegalArgumentException("O mês inserido está inválido");
+    }
+
+    public int getHora() {
+        return hora;
+    }
+    public void setHora(int hora) {
+        if (validaHora(hora, this.minuto)) {
+            this.hora = hora;
+        } else throw new IllegalArgumentException("A hora inserida está inválida");
+    }
+
     public int getMinuto() {
         return minuto;
     }
-
-    public void setAno(int ano) {
-        this.ano = ano;
-    }
-    public void setDia(int dia) {
-        this.dia = dia;
-    }
-    public void setHora(int hora) {
-        this.hora = hora;
-    }public void setMes(int mes) {
-        this.mes = mes;
-    }
     public void setMinuto(int minuto) {
-        this.minuto = minuto;
+        if (validaHora(this.hora, minuto)) {
+            this.minuto = minuto;
+        } else throw new IllegalArgumentException("O minuto inserido está inválido");
     }
 
     
